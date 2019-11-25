@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles({
+  card: {
+    //maxWidth: 345,
+  },
+  media: {
+    height: 300,
+  },
+  
+});
 
 function App() {
+
+  const classes = useStyles();
+
+  const [weather, setWeather] = useState([]);
+
+  useEffect(() => {
+    call();
+  }, []);
+
+  async function call() {
+    const response = await fetch("http://2ec8f6ba-6bfe-4098-ace7-ee8eb1453f24.pub.cloud.scaleway.com/test/current_weather_service_test?lat=36.96&lon=122.02");
+    const weather = await response.json();
+    console.log(weather);
+    setWeather(weather.weather);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Card className={classes.card}>
+      <CardActionArea>
+        <CardMedia
+          className={classes.media}
+          image={weather.icon}
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="h2">
+            {weather.temperature} °C / {weather.description}
+          </Typography>
+          <Typography gutterBottom variant="h6" component="p">
+            {weather.clouds}% Cloud Coverage
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 }
 
 export default App;
+
