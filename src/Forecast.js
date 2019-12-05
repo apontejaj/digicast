@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
+    
   },
+  card: {
+    //maxWidth: 345,
+    maxHeight: 185,
+  },
+  
 }));
 
 function PaperSheet() {
@@ -22,7 +30,7 @@ function PaperSheet() {
     const response = await fetch("http://localhost/test/forecast_three_weather_service_test?lat=36.96&lon=122.02");
     //const response = await fetch("http://localhost:1337/test/forecast_seven_weather_service_test?lat=36.96&lon=122.02");
     const forecast = await response.json();
-    console.log(forecast);
+    // console.log(forecast);
     setForecast(forecast.forecast);
   }
 
@@ -46,11 +54,16 @@ function PaperSheet() {
   }
 
   return (
-    <div>
-      <Paper className={classes.root}>
+    <Card className={classes.card}>
+    <CardActionArea>
+      <CardContent>
+
         {component}
-      </Paper>
-    </div>
+
+      </CardContent>
+    </CardActionArea>
+  </Card>
+
   );
 
 }

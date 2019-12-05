@@ -10,9 +10,11 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles({
   card: {
     //maxWidth: 345,
+    //maxHeight: 200,
+    //height: 185,
   },
   media: {
-    height: 300,
+    height: 200,
   },
   
 });
@@ -21,16 +23,16 @@ function App() {
 
   const classes = useStyles();
 
-  const [weather, setWeather] = useState([]);
+  const [weather, setWeather] = useState([{icon:null}]);
 
   useEffect(() => {
     call();
   }, []);
 
   async function call() {
-    const response = await fetch("http://2ec8f6ba-6bfe-4098-ace7-ee8eb1453f24.pub.cloud.scaleway.com/test/current_weather_service_test?lat=36.96&lon=122.02");
+    const response = await fetch("http://localhost/test/current_weather_service_test?lat=36.96&lon=122.02");
     const weather = await response.json();
-    console.log(weather);
+    // console.log(weather);
     setWeather(weather.weather);
   }
 

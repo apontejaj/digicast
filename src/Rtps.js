@@ -11,38 +11,38 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     //maxWidth: 345,
-    height: 150,
+    //height: 185,
   },
 }));
 
 function PaperSheet(props) {
-
-  const source = props.source;
+  const stopid = props.stopid;
   const classes = useStyles();
-  const [news, setNews] = useState([]);
+
+  const [rtps, setRtps] = useState([]);
 
   useEffect(() => {
     call();
   });
 
   async function call() {
-    const response = await fetch("http://localhost/test/news_service_test?newsProvider=" + source);
-    const news = await response.json();
-    setNews(news.news);
-
+    const response = await fetch("http://localhost/test/rtpi_stop_realtime?stopid=" + stopid);
+    const rtps = await response.json();
+    //console.log(rtps);
+    setRtps(rtps);
   }
 
   let component = [];
-
-  for (var i = 0; i < news.length/news.length; i++){
   
+  for (var i = 0; i < rtps.length; i++){
+
     component.push(   
       <div>       
       <Typography variant="h5" component="h3">
-        {news[0].title}
+        {rtps[i].route} - {rtps[i].destination}
       </Typography>
       <Typography component="p">
-        {news[i].content}
+        Due in {rtps[i].departureduetime} mins
       </Typography>
       </div>
     );
