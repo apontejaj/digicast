@@ -7,6 +7,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles({
   card: {
+    height: '100%',
     //maxWidth: 345,
   },
   media: {
@@ -15,11 +16,10 @@ const useStyles = makeStyles({
   
 });
 
-function App() {
+function App(props) {
 
+  const logo = props.logo;
   const classes = useStyles();
-
-  const logo = 'https://careersnews.ie/wp-content/uploads/2019/01/TUD_RGB-1024x645.png';
 
   return (
     <Card className={classes.card}>

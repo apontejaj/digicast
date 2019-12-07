@@ -4,14 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(3, 2),
-  },
   card: {
     //maxWidth: 345,
-    height: 150,
+    height: '100%',
   },
 }));
 
@@ -20,33 +18,60 @@ function PaperSheet(props) {
   const source = props.source;
   const classes = useStyles();
   const [news, setNews] = useState([]);
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
-    call();
-  });
+
+      if(counter === 0){
+        call();
+      }
+      
+      setTimeout(() =>{
+
+        if(counter === 10){
+          setCounter(0);
+        }
+        else {
+          setCounter(counter + 1);
+        }
+
+      }, 5000);
+    
+  }, [counter]);
+
 
   async function call() {
     const response = await fetch("http://localhost/test/news_service_test?newsProvider=" + source);
-    const news = await response.json();
-    setNews(news.news);
-
+    const json = await response.json();
+    setNews(json.news);
   }
 
-  let component = [];
-
-  for (var i = 0; i < news.length/news.length; i++){
+  let component;
   
-    component.push(   
+  if(counter === 0){
+    component =  <CircularProgress />
+    
+    setTimeout(()=>{
+      setCounter(1);
+    },3000);
+  }
+  else {
+    setComponent();
+  }
+
+  function setComponent() {
+    component = 
       <div>       
       <Typography variant="h5" component="h3">
-        {news[0].title}
+        {news[counter - 1].title}
       </Typography>
       <Typography component="p">
-        {news[i].content}
+        {news[counter - 1].content}
       </Typography>
       </div>
-    );
+
   }
+
 
   return (
     <Card className={classes.card}>

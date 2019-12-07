@@ -11,10 +11,10 @@ const useStyles = makeStyles({
   card: {
     //maxWidth: 345,
     //maxHeight: 200,
-    height: "100%",
+    height: '33.33%',
   },
   media: {
-    height: "100%",
+    height: 200,
   },
   
 });
@@ -36,7 +36,7 @@ function App(props) {
     setPics(bladybla.data);  
   }
 
-
+  console.log(pics);
 
   return (
     <Card className={classes.card}>
@@ -46,7 +46,7 @@ function App(props) {
           image={pics[0].imageUrl}
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom variant="h7" component="h2">
             @{sHandler} 
           </Typography>
         </CardContent>

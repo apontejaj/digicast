@@ -32,6 +32,7 @@ class App extends Component {
     //             correct_answer: "Answer"}
     
     //set loaded and answer index
+    console.log(q);
     this.setState({quiz:q, loaded:true, choice : Math.floor((q.incorrect_answers.length+1) * Math.random())});
 
     //set timer after question has loaded
@@ -96,37 +97,48 @@ class App extends Component {
   }
 
   display(){
+
     const classes = makeStyles({
-        card: {
-          //minWidth: 275,
-          height: 250,
-        },
-        bullet: {
-          display: 'inline-block',
-          margin: '0 2px',
-          transform: 'scale(0.8)',
-        },
-        title: {
-          float: "right",
-          fontSize: 14,
-        },
-        pos: {
-          marginBottom: 12,
-        },
-      });
+      card: {
+        //minWidth: 275,
+        height: "50%",
+        width: '50%',
+      },
+      bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+      },
+      title: {
+        float: "right",
+        fontSize: 14,
+      },
+      pos: {
+        marginBottom: 12,
+      },
+    });
 
     if(this.state.loaded)//only display after quiz is loaded
-    {  if(this.state.counter > 0){                                   //display quiz
+    {  
+      
+      if(this.state.counter > 0){                                   //display quiz
         return(
           <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h5" component="h2" data-jsondata="@key">
-              {this.convertSTR(this.getQuestion())}
-            </Typography><div style={{float:"right"}}><h1>{this.state.counter}</h1></div>
-            {this.mapAnswers()}
-          </CardContent>
-        </Card>
-      )} 
+            <CardContent>
+              <div>
+              <Typography variant="h5" component="h2" data-jsondata="@key">
+                {this.convertSTR(this.getQuestion())}
+              </Typography>
+              
+              <div style={{float:"right"}}><h1>{this.state.counter}</h1></div>
+              {this.mapAnswers()}
+
+              </div>
+              
+            </CardContent>
+          </Card>
+        )
+      } 
       else {                                                     //display answer
         //5 seconds after hitting 0, refresh the page
         if(this.state.counter === -5)
@@ -135,10 +147,15 @@ class App extends Component {
         //this is how to display the quiz answer
         return(
           <Card className={classes.card}>
+          
             <CardContent>
+              <div>
               <Typography variant="h5" component="h2" data-jsondata="@key">
                 {this.convertSTR(this.getAnswer())}
               </Typography>
+
+              </div>
+            
             </CardContent>
           </Card>
         )}}
