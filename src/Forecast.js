@@ -17,20 +17,20 @@ const useStyles = makeStyles(theme => ({
   
 }));
 
-function PaperSheet() {
+function PaperSheet(props) {
+
+  const location = "lat="+props.lat+"lon+"+props.long;
   const classes = useStyles();
 
   const [forecast, setForecast] = useState([]);
 
   useEffect(() => {
-    call();
-  });
+      call();
+  },[]);
 
   async function call() {
-    const response = await fetch("http://localhost/test/forecast_three_weather_service_test?lat=36.96&lon=122.02");
-    //const response = await fetch("http://localhost:1337/test/forecast_seven_weather_service_test?lat=36.96&lon=122.02");
+    const response = await fetch("http://localhost/test/forecast_three_weather_service_test?"+location);
     const forecast = await response.json();
-    // console.log(forecast);
     setForecast(forecast.forecast);
   }
 

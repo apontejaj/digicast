@@ -32,11 +32,9 @@ function App(props) {
 
   async function call() {
     const response = await fetch("http://localhost/test/latest_insta?id="+sHandler);
-    const bladybla = await response.json();
-    setPics(bladybla.data);  
+    const json = await response.json();
+    setPics(json.data);
   }
-
-  console.log(pics);
 
   return (
     <Card className={classes.card}>

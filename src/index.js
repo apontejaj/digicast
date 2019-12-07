@@ -4,7 +4,10 @@ import './index.css';
 import Grid from './Grid';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<Grid />, document.getElementById('root'));
+
+const sCastId = window.location.pathname.substr(1);
+
+ReactDOM.render(<Grid sCastId={sCastId}/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

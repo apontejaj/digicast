@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CurrentWeather from './CurrentWeather';
@@ -9,6 +9,14 @@ import Rtps from './Rtps';
 import Instagram from './Instagram';
 import Quiz from './Quiz';
 import Clock from './Clock';
+import { callExpression } from '@babel/types';
+
+let oWidget;
+let main;
+let sideOne;
+let sideTwo;
+let sideThree;
+let logo;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,53 +41,81 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CenteredGrid() {
-  const classes = useStyles();
+export default function CenteredGrid(props) {
 
-  var layout = {
-    main: "Instagram",
-    sideTop: "Forecast",
-    sideMid: "Current",
-    sideBot: "Quiz",
-    logo: 'https://careersnews.ie/wp-content/uploads/2019/01/TUD_RGB-1024x645.png',
+  const sCastId = props.sCastId;
+  const classes = useStyles();
+  const [cast, setCast] = useState({widgets: []});
+
+  useEffect(()=>{
+    call();
+  }, []);
+
+  async function call() {
+    const response = await fetch("http://localhost/cast/data/" + sCastId);
+    const json = await response.json();
+    setCast(json);
+    
   }
 
-  function layoutManager(element){
-    if(element === "Forecast"){
-      return <Forecast />
+  for(var i = 0; i < cast.widgets.length; i++){
+    
+    oWidget = cast.widgets[i];
+    
+    if(oWidget.position === "main"){
+      main = layoutManager(oWidget);
     }
-    if(element === "Current"){
-      return <CurrentWeather />
+    else if(oWidget.position === "sideOne"){
+      sideOne = layoutManager(oWidget);
     }
-    if(element === "Quiz"){
+    else if(oWidget.position === "sideTwo"){
+      sideTwo = layoutManager(oWidget);
+    }
+    else if(oWidget.position === "sideThree"){
+      sideThree = layoutManager(oWidget);
+    }
+  }
+
+  function layoutManager(oWidget){
+    if(oWidget.user_widget_id.widget_id === "YOUTUBE"){
+      return "YouTube will go here";
+    }
+    else if(oWidget.user_widget_id.widget_id === "WEATHER"){
+      // This data is going to come from the api
+      return <CurrentWeather lat={36.96} long={122.02}/>
+    }
+    else if(oWidget.user_widget_id.widget_id === "FORECAST"){
+      // This data is going to come from the api
+      return <Forecast lat={36.96} long={122.02}/>
+    }
+    else if(oWidget.user_widget_id.widget_id === "TRIVIA"){
       return <Quiz />
     }
-    if(element === "Instagram"){
-      return <Instagram handler="apontejaj"/>
+    // else if(oWidget.user_widget_id.widget_id === "INSTAGRAM"){
+    //   return <Instagram handler={oWidget.user_widget_id.api_param}/>
+    // }
+    else if(oWidget.user_widget_id.widget_id === "TRAVEL"){
+      return <Rtps stopid={oWidget.user_widget_id.api_param}/>
     }
-    if(element === "Rtps"){
-      return <Rtps stopid="6282"/>
+    else if(oWidget.user_widget_id.widget_id === "CLOCK"){
+      // to do
+    }
+    else if(oWidget.user_widget_id.widget_id === "TWITTER"){
+      //to do
     }
   }
-
-  const main = layoutManager(layout.main);
-  //const main = <News source="bbc-news"/>;
-  const sideTop = layoutManager(layout.sideTop);
-  const sideMid = layoutManager(layout.sideMid);
-  const sideBot = layoutManager(layout.sideBot);
-  const logo = layoutManager(layout.logo);
 
   return (
     <div className={classes.root}>
       <Grid container className={classes.top}>
 
         <Grid item xs={9} height='100%'>
-          {/* {main} */}
+          {main}
         </Grid>
         <Grid item xs={3} height="100%">
-          {/* {sideTop} */}
-          {/* {sideMid} */}
-          {sideBot}
+          {sideOne}
+          {sideTwo}
+          {sideThree}
 
         </Grid> 
       
@@ -91,11 +127,11 @@ export default function CenteredGrid() {
               <Clock />
           </Grid>
           <Grid item xs={6} heigh='100%'>
-              <News source="bbc-news"/>
+              {/* <News source="bbc-news"/> */}
           </Grid>
           <Grid item xs={3}>
 
-              <Logo logo={layout.logo}/>
+              <Logo logo={"https://careersnews.ie/wp-content/uploads/2019/01/TUD_RGB-1024x645.png"}/>
           </Grid>
       </Grid> 
     </div>

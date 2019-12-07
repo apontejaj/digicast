@@ -19,8 +19,9 @@ const useStyles = makeStyles({
   
 });
 
-function App() {
+function App(props) {
 
+  const location = "lat="+props.lat+"lon+"+props.long;
   const classes = useStyles();
 
   const [weather, setWeather] = useState([{icon:null}]);
@@ -30,7 +31,7 @@ function App() {
   }, []);
 
   async function call() {
-    const response = await fetch("http://localhost/test/current_weather_service_test?lat=36.96&lon=122.02");
+    const response = await fetch("http://localhost/test/current_weather_service_test?" + location);
     const weather = await response.json();
     // console.log(weather);
     setWeather(weather.weather);
