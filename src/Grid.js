@@ -13,6 +13,7 @@ import AnalogClock from './analogclock/App';
 import Twitter from './Twitter';
 import YouTube from './YouTube';
 
+// Variable for each one of the components in the layout
 let oWidget;
 let main;
 let sideOne;
@@ -20,6 +21,7 @@ let sideTwo;
 let sideThree;
 let logo;
 
+// Styles
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -29,6 +31,9 @@ const useStyles = makeStyles(theme => ({
     // textAlign: 'center',
     // color: theme.palette.text.secondary,
     height: '33.33%',
+  },
+  main:{
+    height: "100%",
   },
   stickToBottom: {
     width: '100%',
@@ -43,16 +48,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+// Component Function
 export default function CenteredGrid(props) {
 
+  //Getting cast id from the Index through props
   const sCastId = props.sCastId;
   const classes = useStyles();
+
+  // Creating state variable and setter
   const [cast, setCast] = useState({widgets: [], cast: {user_id:{logo: null}}});
 
+  // Start of the API calling
   useEffect(()=>{
     call();
   }, []);
 
+  // Function to call the API
   async function call() {
     const response = await fetch("http://localhost/cast/data/" + sCastId);
     const json = await response.json();
@@ -60,16 +71,17 @@ export default function CenteredGrid(props) {
     
   }
 
-  console.log(cast);
+  // Looping over the array of widgets to classify them
   for(var i = 0; i < cast.widgets.length; i++){  
     oWidget = cast.widgets[i];
+
+    // Depending on the position of the widget
+    // it will be located in a particular variable
     if(oWidget.position === "main"){
       main = layoutManager(oWidget);
     }
     else if(oWidget.position === "sideOne,"){
-      console.log(cast);
       sideOne = layoutManager(oWidget);
-
     }
     else if(oWidget.position === "sideTwo"){
       sideTwo = layoutManager(oWidget);
@@ -79,12 +91,13 @@ export default function CenteredGrid(props) {
     }
   }
 
+  // Depending on the type of widget, it is going to be
+  // rendered in different ways.
   function layoutManager(oWidget){
     if(oWidget.user_widget_id.widget_id === "YOUTUBE"){
       return <YouTube link= {"https://www.youtube.com/embed/"+oWidget.user_widget_id.api_param}/>
     }
     else if(oWidget.user_widget_id.widget_id === "WEATHER"){
-      // This data is going to come from the api
       return <CurrentWeather lat={36.96} long={122.02}/>
     }
     else if(oWidget.user_widget_id.widget_id === "TRIVIA"){
@@ -94,9 +107,7 @@ export default function CenteredGrid(props) {
       return <Instagram handler={oWidget.user_widget_id.api_param}/>
     }
     else if(oWidget.user_widget_id.widget_id === "TRAVEL"){
-      console.log(oWidget.user_widget_id.api_param);
-      return <Rtps stopid={oWidget.user_widget_id.api_param}/>
-      
+      return <Rtps stopid={oWidget.user_widget_id.api_param}/>    
     }
     else if(oWidget.user_widget_id.widget_id === "CLOCK"){
       return <AnalogClock />
@@ -106,13 +117,16 @@ export default function CenteredGrid(props) {
     }
   }
 
-  console.log(cast.user_id);
+  // Rendering
   return (
     <div className={classes.root}>
       <Grid container className={classes.top}>
 
         <Grid item xs={9} height='100%'>
-          {main}
+          <div className={classes.main}>
+            {main}
+          </div>
+          
         </Grid>
         <Grid item xs={3} height="100%">
           
@@ -136,11 +150,10 @@ export default function CenteredGrid(props) {
               <Clock />
           </Grid>
           <Grid item xs={6} >
-              <News source="bbc-news"/>
+              <News source="bbc-news"/>    
           </Grid>
           <Grid item xs={3}>
-
-              <Logo logo={"http://localhost/uploads/" + cast.cast.user_id.logo}/>
+            <Logo logo={"http://localhost/uploads/" + cast.cast.user_id.logo}/>
           </Grid>
       </Grid> 
     </div>

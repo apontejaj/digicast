@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-let SRC = "https://www.youtube.com/embed/c6t3bW7kx6E"
+let SRC;
 
 class App extends Component{
 
@@ -30,7 +30,7 @@ class App extends Component{
       return(
         <iframe 
           width="100%" //height and width scale with the containing div
-          height="900" 
+          height='100%' 
           src= {/*this.state.*/SRC + "?autoplay=1"}
           frameBorder="0" 
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
@@ -43,9 +43,9 @@ class App extends Component{
 
   render() {
     return (
-      <div className="App">
-        {this.display()}
-      </div>
+
+        this.display()
+
     );
   }
 }
