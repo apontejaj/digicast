@@ -11,12 +11,13 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     //maxWidth: 345,
-    height: '33.33%',
+    //height: '33.33%',
   },
 }));
 
 function PaperSheet(props) {
   const stopid = props.stopid;
+
   const classes = useStyles();
 
   const [rtps, setRtps] = useState([]);

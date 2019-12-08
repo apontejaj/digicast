@@ -6,6 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import ReactHtmlParser from 'react-html-parser';
 
 
 class App extends Component {
@@ -13,162 +14,131 @@ class App extends Component {
     super(props)
     this.state = {
       counter: 10,
+      questions:null,
+      index:0,
       quiz: null,
       choice:null,
       loaded:false
     };
+
+    //set timer after question has loaded
+    this.qInterval = setInterval(()=>{
+      this.setState({counter: this.state.counter-1})
+    }, 1000);
   }
 
   async componentDidMount() {
     //get first question
-    await this.getQuiz()
+    await this.getQuestions()
   }
 
-  async getQuiz() {
+  async getQuestions() {
     const res = await fetch('http://localhost/test/quiz_service_test');
     const q = await res.json();
-    // const q = {question: "Question",
-    //             incorrect_answers:["Test1", "Test2", "Test3"],
-    //             correct_answer: "Answer"}
-    
-    //set loaded and answer index
     console.log(q);
-    this.setState({quiz:q, loaded:true, choice : Math.floor((q.incorrect_answers.length+1) * Math.random())});
+    this.setState({
+      questions:q,
+      index:0
+    });
 
-    //set timer after question has loaded
-    this.interval = setInterval(()=>{
-      if(this.state.counter > -5){
-        this.setState({counter: this.state.counter-1})
-      }
-    }, 1000)
+    this.getQuiz();
   }
 
-  //my own functions
-  convertSTR(input) {
-    let text = input;
-    if(text)
-    { //TODO: decode string instead of hardcode changes
-      text = text.replace(/&quot;/g,'"');
-      text = text.replace(/&eacute;/g,'é');
-      text = text.replace(/&#039;/g,'\'');
-      text = text.replace(/&amp;/g,'&');
-      text = text.replace(/&shy;/g,'-');
-      text = text.replace(/&lt;/g,'<');
-      text = text.replace(/&gt/g,'>');
-      text = text.replace(/&deg;/g,'º');
-    }
-
-    return text
+  getQuiz() {
+    this.setState({
+      quiz:this.state.questions[this.state.index],
+      loaded:true,
+      choice: Math.floor((this.state.questions[this.state.index].incorrect_answers.length+1) * Math.random())
+    })
   }
 
-  //only return if exists
-  getQuestion(){
-    if(this.state.quiz){
-      return this.state.quiz.question;
-    }
-    return null;
-  }
-  getAnswer(){
-    if(this.state.quiz){
-      return this.state.quiz.correct_answer;
-    }
-    return null;
-  }
 
   mapAnswers(){
-    if(this.state.quiz) {
-      //print choices pased on answer position
-      let ans = this.state.quiz.incorrect_answers.map((x, i) =>{
+    //print choices pased on answer position
+    let ans = this.state.quiz.incorrect_answers.map((x, i) =>{
 
-        //print answer in last place
-        if((i === (this.state.quiz.incorrect_answers.length-1)) && this.state.choice > i) {
-          return <div key={this.state.quiz.correct_answer}>{this.convertSTR(x)}<br/>{this.convertSTR(this.state.quiz.correct_answer)}</div>
-        }
-        //print answer in it's position
-        else if(i === this.state.choice) {
-          return <div key={this.state.quiz.correct_answer}>{this.convertSTR(this.state.quiz.correct_answer)}<br/>{this.convertSTR(x)}</div>
-        }
-        //print as normal
-        return<div key={x}>{this.convertSTR(x)}</div>
-      })
-      return ans;
-    }
-    return null;
+      //print answer in last place
+      if((i === (this.state.quiz.incorrect_answers.length-1)) && this.state.choice > i) {
+        return <div key={this.state.quiz.correct_answer}>{ReactHtmlParser(x)}<br/>{ReactHtmlParser(this.state.quiz.correct_answer)}</div>
+      }
+      //print answer in it's position
+      else if(i === this.state.choice) {
+        return <div key={this.state.quiz.correct_answer}>{ReactHtmlParser(this.state.quiz.correct_answer)}<br/>{ReactHtmlParser(x)}</div>
+      }
+      //print as normal
+      return<div key={x}>{ReactHtmlParser(x)}</div>
+    })
+    return ans;
   }
 
   display(){
-
     const classes = makeStyles({
-      card: {
-        //minWidth: 275,
-        height: "50%",
-        width: '50%',
-      },
-      bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-      },
-      title: {
-        float: "right",
-        fontSize: 14,
-      },
-      pos: {
-        marginBottom: 12,
-      },
-    });
+        card: {
+          minWidth: 275,
+        },
+        bullet: {
+          display: 'inline-block',
+          margin: '0 2px',
+          transform: 'scale(0.8)',
+        },
+        title: {
+          float: "right",
+          fontSize: 14,
+        },
+        pos: {
+          marginBottom: 12,
+        },
+      });
 
     if(this.state.loaded)//only display after quiz is loaded
-    {  
-      
-      if(this.state.counter > 0){                                   //display quiz
+    {  if(this.state.counter > 0){                                   //display quiz
         return(
           <Card className={classes.card}>
-            <CardContent>
-              <div>
-              <Typography variant="h5" component="h2" data-jsondata="@key">
-                {this.convertSTR(this.getQuestion())}
-              </Typography>
-              
-              <div style={{float:"right"}}><h1>{this.state.counter}</h1></div>
-              {this.mapAnswers()}
-
-              </div>
-              
-            </CardContent>
-          </Card>
-        )
-      } 
+          <CardContent>
+            <Typography variant="h5" component="h2" data-jsondata="@key">
+              {ReactHtmlParser(this.state.quiz.question)}
+            </Typography>
+            <div style={{float:"right"}}><h1>{this.state.counter}</h1></div>
+            {this.mapAnswers()}
+          </CardContent>
+        </Card>
+      )} 
       else {                                                     //display answer
         //5 seconds after hitting 0, refresh the page
-        if(this.state.counter === -5)
+        if(this.state.counter < -3)
           this.refresh();
 
         //this is how to display the quiz answer
         return(
           <Card className={classes.card}>
-          
             <CardContent>
-              <div>
-              <Typography variant="h5" component="h2" data-jsondata="@key">
-                {this.convertSTR(this.getAnswer())}
+            <Typography variant="h5" component="h2" data-jsondata="@key">
+              {ReactHtmlParser(this.state.quiz.question)}
+            </Typography>
+              <Typography>
+                {ReactHtmlParser(this.state.quiz.correct_answer)}
               </Typography>
-
-              </div>
-            
             </CardContent>
           </Card>
         )}}
         
         //if not displaying anything play the loading bar
-        return <CircularProgress />
+        return <div style={{float:"center"}}><CircularProgress /></div>
   }
 
   
   async refresh(){
-    this.setState({counter: 10, choice:null,loaded:false});
-    clearInterval(this.interval);
-    await this.getQuiz();
+    if(this.state.index < (this.state.questions.length-1))
+    {
+      this.setState({
+        counter: 10,
+        index: this.state.index+1
+      });
+      this.getQuiz();
+    }
+    else{
+      await this.getQuestions();
+    }
   }
 
   render(){
@@ -178,21 +148,3 @@ class App extends Component {
 }
 
 export default App;
-
-    //   <div className="App">
-    //     <header className="App-header">
-    //       <img src={logo} className="App-logo" alt="logo" />
-    //       <p>
-    //         {this.state.counter}
-    //         {this.state.quiz}
-    //       </p>
-    //       <a
-    //         className="App-link"
-    //         href="https://reactjs.org"
-    //         target="_blank"
-    //         rel="noopener noreferrer"
-    //       >
-    //         Learn React
-    //       </a>
-    //     </header>
-    // </div>

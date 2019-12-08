@@ -11,7 +11,7 @@ const useStyles = makeStyles({
   card: {
     //maxWidth: 345,
     //maxHeight: 200,
-    height: '33.33%',
+    //height: '33.33%',
   },
   media: {
     height: 200,

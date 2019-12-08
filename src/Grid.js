@@ -9,7 +9,9 @@ import Rtps from './Rtps';
 import Instagram from './Instagram';
 import Quiz from './Quiz';
 import Clock from './Clock';
-import { callExpression } from '@babel/types';
+import AnalogClock from './analogclock/App';
+import Twitter from './Twitter';
+import YouTube from './YouTube';
 
 let oWidget;
 let main;
@@ -23,9 +25,9 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   paper: {
-    //padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
+    // //padding: theme.spacing(2),
+    // textAlign: 'center',
+    // color: theme.palette.text.secondary,
     height: '33.33%',
   },
   stickToBottom: {
@@ -45,7 +47,7 @@ export default function CenteredGrid(props) {
 
   const sCastId = props.sCastId;
   const classes = useStyles();
-  const [cast, setCast] = useState({widgets: []});
+  const [cast, setCast] = useState({widgets: [], cast: {user_id:{logo: null}}});
 
   useEffect(()=>{
     call();
@@ -58,15 +60,16 @@ export default function CenteredGrid(props) {
     
   }
 
-  for(var i = 0; i < cast.widgets.length; i++){
-    
+  console.log(cast);
+  for(var i = 0; i < cast.widgets.length; i++){  
     oWidget = cast.widgets[i];
-    
     if(oWidget.position === "main"){
       main = layoutManager(oWidget);
     }
-    else if(oWidget.position === "sideOne"){
+    else if(oWidget.position === "sideOne,"){
+      console.log(cast);
       sideOne = layoutManager(oWidget);
+
     }
     else if(oWidget.position === "sideTwo"){
       sideTwo = layoutManager(oWidget);
@@ -78,33 +81,32 @@ export default function CenteredGrid(props) {
 
   function layoutManager(oWidget){
     if(oWidget.user_widget_id.widget_id === "YOUTUBE"){
-      return "YouTube will go here";
+      return <YouTube link= {"https://www.youtube.com/embed/"+oWidget.user_widget_id.api_param}/>
     }
     else if(oWidget.user_widget_id.widget_id === "WEATHER"){
       // This data is going to come from the api
       return <CurrentWeather lat={36.96} long={122.02}/>
     }
-    else if(oWidget.user_widget_id.widget_id === "FORECAST"){
-      // This data is going to come from the api
-      return <Forecast lat={36.96} long={122.02}/>
-    }
     else if(oWidget.user_widget_id.widget_id === "TRIVIA"){
       return <Quiz />
     }
-    // else if(oWidget.user_widget_id.widget_id === "INSTAGRAM"){
-    //   return <Instagram handler={oWidget.user_widget_id.api_param}/>
-    // }
+    else if(oWidget.user_widget_id.widget_id === "INSTAGRAM"){
+      return <Instagram handler={oWidget.user_widget_id.api_param}/>
+    }
     else if(oWidget.user_widget_id.widget_id === "TRAVEL"){
+      console.log(oWidget.user_widget_id.api_param);
       return <Rtps stopid={oWidget.user_widget_id.api_param}/>
+      
     }
     else if(oWidget.user_widget_id.widget_id === "CLOCK"){
-      // to do
+      return <AnalogClock />
     }
     else if(oWidget.user_widget_id.widget_id === "TWITTER"){
-      //to do
+      return <Twitter handler={oWidget.user_widget_id.api_param}/>
     }
   }
 
+  console.log(cast.user_id);
   return (
     <div className={classes.root}>
       <Grid container className={classes.top}>
@@ -113,9 +115,16 @@ export default function CenteredGrid(props) {
           {main}
         </Grid>
         <Grid item xs={3} height="100%">
-          {sideOne}
-          {sideTwo}
-          {sideThree}
+          
+          <div className={classes.paper}>
+            {sideOne}
+          </div>
+          <div className={classes.paper}>
+            {sideTwo}
+          </div>
+          <div className={classes.paper}>
+            {sideThree}
+          </div>
 
         </Grid> 
       
@@ -126,12 +135,12 @@ export default function CenteredGrid(props) {
           <Grid item xs={3}>
               <Clock />
           </Grid>
-          <Grid item xs={6} heigh='100%'>
-              {/* <News source="bbc-news"/> */}
+          <Grid item xs={6} >
+              <News source="bbc-news"/>
           </Grid>
           <Grid item xs={3}>
 
-              <Logo logo={"https://careersnews.ie/wp-content/uploads/2019/01/TUD_RGB-1024x645.png"}/>
+              <Logo logo={"http://localhost/uploads/" + cast.cast.user_id.logo}/>
           </Grid>
       </Grid> 
     </div>
